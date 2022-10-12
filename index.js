@@ -25,9 +25,29 @@ function init() {
       case 'View All Employees':
         viewAllEmployees();
         break;
+      case 'Add Employee':
+        addEmployee();
+        break;
+      case 'Update Employee Role':
+        updateEmployeeRole();
+        break;
+      case 'View All Roles':
+        viewAllRoles();
+        break;
+      case 'Add Role':
+        addRole();
+        break;
+      case 'View All Departments':
+        viewAllDepartments();
+        break;
+      case 'Add Department':
+        addDepartment();
+        break;
+      case 'Quit':
+        quit();
+        break;
     }
   })
-  // loadPrompts();
 };
 
 // View All Employees;
@@ -36,13 +56,13 @@ function viewAllEmployees() {
                 employee.first_name,
                 employee.last_name,
                 role.title,
-                department.name,
+                department.name AS department,
                 role.salary,
                 CONCAT(manager.first_name, ' ', manager.last_name) AS manager
                 FROM employee
-                JOIN role ON employee.role_id = role.id
-                JOIN department ON role.department_id = department.id
-                JOIN employee AS manager ON employee.manager_id = manager.id
+                LEFT JOIN role ON employee.role_id = role.id
+                LEFT JOIN department ON role.department_id = department.id
+                LEFT JOIN employee AS manager ON employee.manager_id = manager.id
                 ORDER BY employee.id`;
   db.query(query, (err, result) => {
     if (err) throw err;
@@ -50,6 +70,36 @@ function viewAllEmployees() {
     init();
   });
 };
+
+// Add employee
+function addEmployee() {
+
+}
+
+// Update employee role
+function updateEmployeeRole() {
+
+}
+
+// View all roles
+function viewAllRoles() {
+
+}
+
+// Add a role
+function addRole () {
+
+}
+
+// View all departments
+function viewAllDepartments() {
+
+}
+
+// Add a department
+function addDepartment() {
+
+}
 
 // Exit the application
 function quit() {

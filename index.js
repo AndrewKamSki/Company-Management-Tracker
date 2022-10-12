@@ -83,7 +83,18 @@ function updateEmployeeRole() {
 
 // View all roles
 function viewAllRoles() {
-
+  const query = `SELECT role.id,
+                role.title,
+                department.name AS department,
+                role.salary
+                FROM role 
+                LEFT JOIN department ON role.department_id = department.id
+                ORDER BY role.id`;
+  db.query(query, (err, result) => {
+    if (err) throw err;
+    console.table(result);
+    init();
+  });
 }
 
 // Add a role
@@ -93,7 +104,15 @@ function addRole () {
 
 // View all departments
 function viewAllDepartments() {
-
+  const query = `SELECT department.id,
+                department.name
+                FROM department
+                ORDER BY department.id`;
+  db.query(query, (err, result) => {
+    if (err) throw err;
+    console.table(result);
+    init();
+  });
 }
 
 // Add a department

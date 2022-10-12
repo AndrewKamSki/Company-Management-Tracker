@@ -23,21 +23,8 @@ CREATE TABLE employee (
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(30) NOT NULL,
   role_id INT,
-  FOREIGN KEY (role_id)
-  REFERENCES role(id)
-  ON DELETE CASCADE ,
   manager_id INT,
-  FOREIGN KEY (manager_id)
-  REFERENCES employee(id)
-  ON DELETE SET NULL
+  CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE SET NULL,
+  CONSTRAINT fk_employee FOREIGN KEY (manager_id) REFERENCES employee(id) 
+  
 );
-
--- CREATE TABLE favorite_books (
---   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
---   book_name VARCHAR(30) NOT NULL,
---   in_stock BOOLEAN,
---   book_price INT,
---   FOREIGN KEY (book_price)
---   REFERENCES book_prices(id)
---   ON DELETE SET NULL
--- );

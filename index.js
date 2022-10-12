@@ -99,6 +99,41 @@ function viewAllRoles() {
 
 // Add a role
 function addRole () {
+  db.query('SELECT * FROM department', (err, result) => {
+    if (err) throw err;
+    const departments = result.map(department => department.name);
+    prompt([
+      {
+        type: 'input',
+        name: 'new_role',
+        message: 'What is the name of the role?'
+      },
+      {
+        type: 'input',
+        name: 'new_salary',
+        message: 'What is the salary of the role?'
+      },
+      {
+        type: 'list',
+        name: 'department',
+        message: 'What would you like to do?',
+        choices: departments
+      }])
+    .then((answer) => {
+      const query = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
+      let department;
+      db.query(`SELECT id FROM department WHERE name = ?`,answer.department,(err, result) => {
+        if (err) throw err;
+        department = result;
+        const params = [answer.new_role, answer.new_salary, department[0].id];
+        db.query(query, params, (err, result) => {
+          if (err) throw err;
+          console.log(`Added ${params[0]} to the database`);
+          init();
+        });
+      });
+    });
+  })
 
 }
 

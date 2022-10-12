@@ -19,7 +19,7 @@ function init() {
     type: 'list',
     name: 'menu_options',
     message: 'What would you like to do?',
-    choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Deparment', 'Quit']
+    choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
   }).then( answer => {
     switch (answer.menu_options) {
       case 'View All Employees':
@@ -117,8 +117,20 @@ function viewAllDepartments() {
 
 // Add a department
 function addDepartment() {
-
-}
+  prompt({
+    type: 'input',
+    name: 'new_department',
+    message: 'What is the name of the department?'
+  }).then((answer) => {
+    const query = `INSERT INTO department (name) VALUES (?)`;
+    const params = [answer.new_department];
+    db.query(query, params, (err, result) => {
+      if (err) throw err;
+      console.log(`Added ${params} to the database`);
+      init();
+    });
+  });
+};
 
 // Exit the application
 function quit() {

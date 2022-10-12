@@ -73,7 +73,67 @@ function viewAllEmployees() {
 
 // Add employee
 function addEmployee() {
-
+  db.query('SELECT * FROM role', (err, roleResult) => {
+    if (err) throw err;
+    const roles = roleResult.map(role => role.title);
+    db.query(`SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS full_name FROM employee`, (err, empResult) => {
+      if (err) throw err;
+      const employees = empResult.map(employee => employee.full_name)
+      employees.unshift('None');
+      prompt([
+        {
+          type: 'input',
+          name: 'first_name',
+          message: "What is the employee's first name?"
+        },
+        {
+          type: 'input',
+          name: 'last_name',
+          message: "What is the employee's last name?"
+        },
+        {
+          type: 'list',
+          name: 'role',
+          message: 'What would you like to do?',
+          choices: roles
+        },
+        {
+          type: 'list',
+          name: 'manager',
+          message: 'What would you like to do?',
+          choices: employees
+        }
+      ]).then((answer) => {
+        const query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
+        let role;
+        let manager;
+        db.query(`SELECT id FROM role WHERE title = ?`,answer.role,(err, result) => {
+          if (err) throw err;
+          role = result
+          if (answer.manager === "None") {
+            manager = null;
+            const params = [answer.first_name, answer.last_name, role[0].id, manager];
+            db.query(query, params, (err, result) => {
+              if (err) throw err;
+              console.log(`Added ${params[0]} ${params[1]} to the database`);
+              init();
+            });
+          } else {
+            db.query(`SELECT id FROM employee WHERE CONCAT(employee.first_name, ' ', employee.last_name) = ?`, answer.manager, (err, result) => {
+              if (err) throw err;
+              manager = result;
+              const params = [answer.first_name, answer.last_name, role[0].id, manager[0].id];
+              db.query(query, params, (err, result) => {
+                if (err) throw err;
+                console.log(`Added ${params[0]} ${params[1]} to the database`);
+                init();
+              });
+            });
+          };
+        });
+      });
+    });
+  });
 }
 
 // Update employee role
@@ -118,8 +178,8 @@ function addRole () {
         name: 'department',
         message: 'What would you like to do?',
         choices: departments
-      }])
-    .then((answer) => {
+      }
+    ]).then((answer) => {
       const query = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
       let department;
       db.query(`SELECT id FROM department WHERE name = ?`,answer.department,(err, result) => {
@@ -134,7 +194,6 @@ function addRole () {
       });
     });
   })
-
 }
 
 // View all departments

@@ -138,6 +138,44 @@ function addEmployee() {
 
 // Update employee role
 function updateEmployeeRole() {
+  db.query(`SELECT * FROM employee`, (err, empResult) => {
+    if (err) throw err;
+    const employees = empResult.map(employee => {
+      return {
+        name: employee.first_name + ' ' + employee.last_name,
+        value: employee.id
+      }
+    });
+    db.query(`SELECT * FROM role`, (err, roleResult) => {
+      if (err) throw err;
+      const roles = roleResult.map(role => {
+        return {
+          name: role.title,
+          value: role.id
+        }
+      });
+      prompt([
+        {
+          type: 'list',
+          name: 'employee',
+          message: "Which employee's role to you want to update?",
+          choices: employees
+        },
+        {
+          type: 'list',
+          name: 'role',
+          message: 'Which role to you want to assign the selected employee?',
+          choices: roles
+        }
+      ]).then ((answer) => {
+        db.query('UPDATE employee SET ? WHERE ?', [ {role_id: answer.role}, {id: answer.employee}], (err, res) => {
+          if (err) throw err;
+          console.log('Updated employee\'s role')
+          init();
+        })
+      })
+    });
+  })
 
 }
 
